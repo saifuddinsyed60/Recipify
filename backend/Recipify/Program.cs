@@ -3,12 +3,13 @@ using Newtonsoft.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
-public String Db_Path="recipify.db";
-public String Azure_path="D:/home/recipify.db";
 
-private static void CopyDb(){
-    File.Copy(DbPath,Azure_path);
-    File.setAttributes(Azure_path,FileAttributes.Normal);
+static void CopyDb()
+{
+    String DbPath = "recipify.db";
+    String Azure_path = "D:/home/recipify.db";
+    File.Copy(DbPath, Azure_path);
+    File.SetAttributes(Azure_path, FileAttributes.Normal);
 }
 
 // Add services to the container.
@@ -36,8 +37,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-else {
-    copyDb();
+else
+{
+    CopyDb();
 }
 
 app.UseHttpsRedirection();
@@ -229,9 +231,9 @@ app.MapPost("/addRecipe", async (HttpContext context) =>
 {
     var form = await context.Request.ReadFormAsync();
     Recipe r = new Recipe();
-    r.recipeName=form["recipeName"];
-    r.ingredients = form["ingredients"].ToString() .Trim('[', ']','"').Split(',').ToList<String>();
-    r.steps = form["steps"].ToString() .Trim('[', ']','"').Split(',').ToList<String>();
+    r.recipeName = form["recipeName"];
+    r.ingredients = form["ingredients"].ToString().Trim('[', ']', '"').Split(',').ToList<String>();
+    r.steps = form["steps"].ToString().Trim('[', ']', '"').Split(',').ToList<String>();
     r.imageFile = form.Files.GetFile("imageFile");
     if (String.IsNullOrEmpty(r.recipeName))
         return Results.BadRequest("Recipe Name is required");

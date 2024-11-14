@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/saif/Desktop/CSC436/FinalProject/final-project-saifuddinsyed60/backend/Recipify/Recipify.csproj": {}
+    "/Users/saif/Desktop/Recipify/Recipify/backend/Recipify/Recipify.csproj": {}
   },
   "projects": {
-    "/Users/saif/Desktop/CSC436/FinalProject/final-project-saifuddinsyed60/backend/Recipify/Recipify.csproj": {
+    "/Users/saif/Desktop/Recipify/Recipify/backend/Recipify/Recipify.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/saif/Desktop/CSC436/FinalProject/final-project-saifuddinsyed60/backend/Recipify/Recipify.csproj",
+        "projectUniqueName": "/Users/saif/Desktop/Recipify/Recipify/backend/Recipify/Recipify.csproj",
         "projectName": "Recipify",
-        "projectPath": "/Users/saif/Desktop/CSC436/FinalProject/final-project-saifuddinsyed60/backend/Recipify/Recipify.csproj",
+        "projectPath": "/Users/saif/Desktop/Recipify/Recipify/backend/Recipify/Recipify.csproj",
         "packagesPath": "/Users/saif/.nuget/packages/",
-        "outputPath": "/Users/saif/Desktop/CSC436/FinalProject/final-project-saifuddinsyed60/backend/Recipify/obj/",
+        "outputPath": "/Users/saif/Desktop/Recipify/Recipify/backend/Recipify/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/saif/.nuget/NuGet/NuGet.Config"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0T2WOJ5pHmE=",
+  "dgSpecHash": "In/6oLm5meg=",
   "success": true,
-  "projectFilePath": "/Users/saif/Desktop/CSC436/FinalProject/final-project-saifuddinsyed60/backend/Recipify/Recipify.csproj",
+  "projectFilePath": "/Users/saif/Desktop/Recipify/Recipify/backend/Recipify/Recipify.csproj",
   "expectedPackageFiles": [
     "/Users/saif/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/saif/.nuget/packages/microsoft.aspnetcore.openapi/8.0.8/microsoft.aspnetcore.openapi.8.0.8.nupkg.sha512",
