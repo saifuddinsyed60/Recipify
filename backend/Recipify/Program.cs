@@ -4,14 +4,6 @@ using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-static void CopyDb()
-{
-    String DbPath = "recipify.db";
-    String Azure_path = "D:/home/recipify.db";
-    File.Copy(DbPath, Azure_path);
-    File.SetAttributes(Azure_path, FileAttributes.Normal);
-}
-
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -36,10 +28,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-else
-{
-    CopyDb();
 }
 
 app.UseHttpsRedirection();
@@ -231,9 +219,9 @@ app.MapPost("/addRecipe", async (HttpContext context) =>
 {
     var form = await context.Request.ReadFormAsync();
     Recipe r = new Recipe();
-    r.recipeName = form["recipeName"];
-    r.ingredients = form["ingredients"].ToString().Trim('[', ']', '"').Split(',').ToList<String>();
-    r.steps = form["steps"].ToString().Trim('[', ']', '"').Split(',').ToList<String>();
+    r.recipeName=form["recipeName"];
+    r.ingredients = form["ingredients"].ToString() .Trim('[', ']','"').Split(',').ToList<String>();
+    r.steps = form["steps"].ToString() .Trim('[', ']','"').Split(',').ToList<String>();
     r.imageFile = form.Files.GetFile("imageFile");
     if (String.IsNullOrEmpty(r.recipeName))
         return Results.BadRequest("Recipe Name is required");
