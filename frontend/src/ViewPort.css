@@ -1,0 +1,49 @@
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    
+    /* Distribute the cards evenly */
+}
+
+.card-container .card {
+    width: 17rem;
+    /* Allow the cards to grow and shrink, but start at 30rem */
+    margin: 7px;
+    /* Add margin between cards */
+    
+    
+}
+
+.trending{
+    text-decoration: none;
+}
+
+.spacing {
+    margin-left: 50px;
+}
+.navbar-brand {
+    font-size: 2rem !important;
+    font-weight: bold;
+}
+
+.nav-link {
+    font-size: 1.5rem !important;
+}
+
+.nav-link:hover{
+    color: red !important;
+}
+.banner{
+    height: 810px;
+}
+
+.logo{
+    width: 150px;
+    height:150 px;
+    padding: 30px;
+    border-radius: 50%;
+}
+
+
+
+

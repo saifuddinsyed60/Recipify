@@ -1,0 +1,14 @@
+/* CSS File: ImageStyles.css */
+.image-container {
+    display: flex;
+    justify-content: center;  /* Centers horizontally */
+    align-items: center;      /* Centers vertically */
+    height: 100vh;            /* Full viewport height */
+  }
+  
+  .centered-image {
+    border-radius: 15px;      /* Rounds the corners of the image */
+    max-width: 80%;           /* Limits the width to 80% of the container */
+    height: auto;             /* Maintains the aspect ratio */
+  }
+  
