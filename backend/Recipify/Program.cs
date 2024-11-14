@@ -3,6 +3,13 @@ using Newtonsoft.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
+public String Db_Path="recipify.db";
+public String Azure_path="D:/home/recipify.db";
+
+private static void CopyDb(){
+    File.Copy(DbPath,Azure_path);
+    File.setAttributes(Azure_path,FileAttributes.Normal);
+}
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -28,6 +35,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+else {
+    copyDb();
 }
 
 app.UseHttpsRedirection();
