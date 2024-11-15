@@ -1,6 +1,6 @@
 import { Modal, Form, Button, Toast } from 'react-bootstrap';
 import { useState } from 'react';
-function RecipeCreator({ show, setShow }) {
+function RecipeCreator({ onRecipeCreated,show, setShow }) {
     const handleClose = () => setShow(false);
 
     const [showToast, setShowToast] = useState(false);
@@ -29,7 +29,7 @@ function RecipeCreator({ show, setShow }) {
             "username": username
         };
         createRecipe(r);//sent Post request
-
+        onRecipeCreated(); //To trigger refresh
 
     }
 

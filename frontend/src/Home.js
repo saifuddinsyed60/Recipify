@@ -14,6 +14,11 @@ function Home() {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
   
+  const[updateKey,setUpdateKey]=useState(0);
+
+  const handleRecipeCreated=()=>{
+    setUpdateKey(updateKey+1);
+  }
 
   return (<>
     <img className="banner" src={banner} alt="Banner" />
@@ -22,9 +27,9 @@ function Home() {
         <h1>&nbsp;&nbsp;&nbsp;Trending<IoMdTrendingUp /></h1>
       </Link>
       <Button variant="warning" onClick={handleShow} className='b'>+ Add new Recipe</Button>
-    <RecipeCreator show={show} setShow={setShow}/>
+    <RecipeCreator onRecipeCreated={handleRecipeCreated} show={show} setShow={setShow}/>
     </div>
-    <Recipes userFilter="" />
+    <Recipes key={updateKey} userFilter="" />
 
   </>
   )
