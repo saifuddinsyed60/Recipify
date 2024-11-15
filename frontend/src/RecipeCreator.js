@@ -15,7 +15,7 @@ function RecipeCreator({ show, setShow }) {
     const [imagePreviewUrl, setImagePreviewUrl] = useState(''); //To display selected image
     const [image, setImage] = useState('');
 
-    const hostName = "https://recipify-caced2b9g2eyb4cr.northcentralus-01.azurewebsites.net";  //Azure url for backend
+    const hostName = "http://127.0.0.1:5209";
 
     const handleAddRecipe = (e) => {
         e.preventDefault();

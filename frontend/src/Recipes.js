@@ -6,7 +6,7 @@ import { IoMdTrendingUp } from "react-icons/io";
 import { BiSolidUpvote, BiSolidCommentDetail, BiSolidDownvote } from "react-icons/bi";
 import { Link } from 'react-router-dom';
 
-const hostname = 'https://recipify-caced2b9g2eyb4cr.northcentralus-01.azurewebsites.net'; //Azure url for backend
+const hostname = 'http://127.0.0.1:5209'
 
 function Recipes({ userFilter }) {
     const [show, setShow] = useState(false);
@@ -204,7 +204,8 @@ function Recipes({ userFilter }) {
                             <Card.Body>
                                 <Card.Title>{recipe.recipeName}</Card.Title>
                                 <Card.Text>
-                                    <img src={recipe.image} alt={recipe.recipeName} style={{ width: '100%' }} />
+                                    <img src={`data:image/jpeg;base64,${recipe.imageFileBase64}`}
+                                        alt={recipe.recipeName} style={{ width: '100%', height: '100%' }} />
                                 </Card.Text>
                                 <Button variant="primary" onClick={() => handleShow(recipe)}>
                                     See details
@@ -227,9 +228,10 @@ function Recipes({ userFilter }) {
                     <Modal.Header closeButton>
                         <Modal.Title>{selectedRecipe.recipeName}</Modal.Title>
                     </Modal.Header>
+                    
                     <Modal.Body>
-                        <img src={selectedRecipe.image} alt={selectedRecipe.recipeName} style={{ width: '100%' }} />
-                        <h5>Ingredients:</h5>
+                        <img src={`data:image/jpeg;base64,${selectedRecipe.imageFileBase64}`}
+                           style={{ width: '100%', height: '100%' }} />  <h5>Ingredients:</h5>
                         <ul>
                             {selectedRecipe.ingredients.map((ingredient, index) => (
                                 <li key={index}>{ingredient}</li>
