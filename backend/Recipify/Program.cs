@@ -206,6 +206,7 @@ app.MapGet("/getRecipes/{username?}", (string? username) =>
     using (recipeContext rc = new recipeContext())
     {
         List<Recipe> recipes = rc.Recipe.OrderBy(r => r.id).ToList();
+        recipes.ForEach(r=>r.imageFileBase64=Convert.ToBase64String(r.imageFile));
         if (String.IsNullOrEmpty(username))
             return Results.Ok(recipes);
         else
@@ -222,33 +223,21 @@ app.MapPost("/addRecipe", async (HttpContext context) =>
     r.recipeName=form["recipeName"];
     r.ingredients = form["ingredients"].ToString() .Trim('[', ']','"').Split(',').ToList<String>();
     r.steps = form["steps"].ToString() .Trim('[', ']','"').Split(',').ToList<String>();
-    r.imageFile = form.Files.GetFile("imageFile");
-    if (String.IsNullOrEmpty(r.recipeName))
-        return Results.BadRequest("Recipe Name is required");
-
-    //var uploadsFolder = Path.Combine("..", "..", "frontend", "public", "recipeImages");
-    //Directory.CreateDirectory(uploadsFolder); // Ensure directory exists
-
-    var projectRoot = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName;
-    var uploadsFolder = Path.Combine(projectRoot, "frontend", "public", "recipeImages");
-    Directory.CreateDirectory(uploadsFolder); // Ensure directory exists
-
-
-    var fileName = Guid.NewGuid().ToString() + r.recipeName + ".jpg";
-    var filePath = Path.Combine(uploadsFolder, fileName);
-
-    // Save the byte array to the specified path
-    if (r.imageFile != null && r.imageFile.Length > 0)
+    var imageFile = form.Files.GetFile("imageFile");
+    if (imageFile != null)
     {
-        using var stream = new FileStream(filePath, FileMode.Create);
-        await r.imageFile.CopyToAsync(stream);
+        using (var memoryStream = new MemoryStream())
+        {
+            await imageFile.CopyToAsync(memoryStream);
+            r.imageFile = memoryStream.ToArray();
+        }
     }
     else
     {
-        return Results.BadRequest("Image file is required");
+        r.imageFile = null;
     }
-    r.image = Path.Combine("/recipeImages", fileName);
-    r.imageFile = null;
+    r.username = form["username"];
+    r.upvotes = 0;
     using (recipeContext rc = new recipeContext())
     {
         rc.Add(r);
