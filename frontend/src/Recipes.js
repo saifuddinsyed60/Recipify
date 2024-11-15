@@ -6,7 +6,7 @@ import { IoMdTrendingUp } from "react-icons/io";
 import { BiSolidUpvote, BiSolidCommentDetail, BiSolidDownvote } from "react-icons/bi";
 import { Link } from 'react-router-dom';
 
-const hostname = 'http://127.0.0.1:5209'
+const hostname = 'https://recipify-caced2b9g2eyb4cr.northcentralus-01.azurewebsites.net'; //Azure url for backend
 
 function Recipes({ userFilter }) {
     const [show, setShow] = useState(false);
