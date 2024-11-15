@@ -1,5 +1,6 @@
 import { Modal, Form, Button, Toast } from 'react-bootstrap';
 import { useState } from 'react';
+import config from './config';
 function RecipeCreator({ onRecipeCreated,show, setShow }) {
     const handleClose = () => setShow(false);
 
@@ -15,7 +16,7 @@ function RecipeCreator({ onRecipeCreated,show, setShow }) {
     const [imagePreviewUrl, setImagePreviewUrl] = useState(''); //To display selected image
     const [image, setImage] = useState('');
 
-    const hostName = "http://127.0.0.1:5209";
+    const hostName = config.backendUrl;
 
     const handleAddRecipe = (e) => {
         e.preventDefault();

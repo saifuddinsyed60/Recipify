@@ -5,8 +5,9 @@ import Card from 'react-bootstrap/Card';
 import { IoMdTrendingUp } from "react-icons/io";
 import { BiSolidUpvote, BiSolidCommentDetail, BiSolidDownvote } from "react-icons/bi";
 import { Link } from 'react-router-dom';
+import config from './config';
 
-const hostname = 'http://127.0.0.1:5209'
+const hostname = config.backendUrl;
 
 function Recipes({ userFilter }) {
     const [show, setShow] = useState(false);
