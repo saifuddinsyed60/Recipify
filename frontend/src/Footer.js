@@ -4,12 +4,12 @@ const socialLinks = [
     {
       id: 1,
       icon: <FiGlobe />,
-      url: "https://www.stoman.me/",
+      url: "https://proud-pebble-05ac82510.5.azurestaticapps.net/",
     },
     {
       id: 2,
       icon: <FiGithub />,
-      url: "https://github.com/",
+      url: "https://github.com/saifuddinsyed60",
     },
     {
       id: 3,
@@ -19,12 +19,12 @@ const socialLinks = [
     {
       id: 4,
       icon: <FiLinkedin />,
-      url: "https://www.linkedin.com/in/",
+      url: "https://www.linkedin.com/in/syed-saifuddin-7b98377b",
     },
     {
       id: 5,
       icon: <FiYoutube />,
-      url: "https://www.youtube.com/c/",
+      url: "https://www.youtube.com",
     },
   ];
 
