@@ -1,23 +1,66 @@
 import { useState } from 'react';
-import { Container, Row, Col, Form, Card, Button } from 'react-bootstrap';
-
+import { Container, Row, Col, Form, Card, Button ,Alert} from 'react-bootstrap';
+import config from './config';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 function Signup() {
     const [validated, setValidated] = useState(false);
+    const [name,setName]=useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState(""); //For showing errors
 
-    const handleSubmit = (event) => {
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        setValidated(true);
-    };
+    const navigate=useNavigate();
+
+
+
+    const hostname = config.backendUrl;
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        fetch(hostname + '/signup', {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json",
+                "Authorization": "Basic " + btoa(email + ":" + password)
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Parse the JSON response
+                    return response.json(); // This converts the response to JSON
+                } else {
+                    //setError("Username not found in response");
+                }
+            })
+            .then(dataObj => {
+               //setIsAuthenticated(true);
+                navigate("/login"); // Redirect to login page
+
+
+
+            })
+            .catch(err => {
+                console.error(err);
+                setError("Invalid email or password, SignUp failed");
+            });
+
+        setPassword(""); // Clear the password field after the request
+    }
 
    
     return (
         <Container className="d-flex justify-content-center align-items-center vh-100 bg-light">
             <Row>
                 <Col>
+                {error && ( // Conditionally render the Alert
+                        <Alert variant="danger" onClose={() => setError("")} dismissible>
+                            {error}
+                        </Alert>
+                    )}
                     <Card className="shadow-lg" style={{ width: '28rem' }}>
                         <Card.Body>
                             <h3 className="text-center mb-4">Sign Up</h3>
@@ -28,6 +71,8 @@ function Signup() {
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter your name"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
                                         required
                                     />
                                     <Form.Control.Feedback type="invalid">
@@ -41,6 +86,8 @@ function Signup() {
                                     <Form.Control
                                         type="email"
                                         placeholder="Enter email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         required
                                     />
                                     <Form.Control.Feedback type="invalid">
@@ -54,6 +101,8 @@ function Signup() {
                                     <Form.Control
                                         type="password"
                                         placeholder="Create a password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
                                         required
                                     />
                                     <Form.Control.Feedback type="invalid">

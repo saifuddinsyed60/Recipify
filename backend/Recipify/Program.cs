@@ -1,6 +1,15 @@
 using System.Formats.Tar;
 using Newtonsoft.Json;
-
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Identity;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +17,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer();
+builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options =>
 {
@@ -19,6 +31,35 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader()
         .SetIsOriginAllowed((host) => true)
         .AllowAnyMethod();
+    });
+});
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "basic",
+        In = ParameterLocation.Header,
+        Description = "Basic Authorization header using the Bearer scheme."
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "basic"
+                }
+            },
+            new string[] {}
+        }
     });
 });
 var app = builder.Build();
@@ -206,7 +247,7 @@ app.MapGet("/getRecipes/{username?}", (string? username) =>
     using (recipeContext rc = new recipeContext())
     {
         List<Recipe> recipes = rc.Recipe.OrderBy(r => r.id).ToList();
-        recipes.ForEach(r=>r.imageFileBase64=Convert.ToBase64String(r.imageFile));
+        recipes.ForEach(r => r.imageFileBase64 = Convert.ToBase64String(r.imageFile));
         if (String.IsNullOrEmpty(username))
             return Results.Ok(recipes);
         else
@@ -216,13 +257,13 @@ app.MapGet("/getRecipes/{username?}", (string? username) =>
 .WithName("GetRecipes")
 .WithOpenApi();
 
-app.MapPost("/addRecipe", async (HttpContext context) =>
+app.MapPost("/addRecipe", [Authorize] async (HttpContext context) =>
 {
     var form = await context.Request.ReadFormAsync();
     Recipe r = new Recipe();
-    r.recipeName=form["recipeName"];
-    r.ingredients = form["ingredients"].ToString() .Trim('[', ']','"').Split(',').ToList<String>();
-    r.steps = form["steps"].ToString() .Trim('[', ']','"').Split(',').ToList<String>();
+    r.recipeName = form["recipeName"];
+    r.steps = JsonConvert.DeserializeObject<List<String>>(form["steps"]);
+    r.ingredients = JsonConvert.DeserializeObject<List<String>>(form["ingredients"]);
     var imageFile = form.Files.GetFile("imageFile");
     if (imageFile != null)
     {
@@ -247,6 +288,171 @@ app.MapPost("/addRecipe", async (HttpContext context) =>
 })
 .WithName("AddRecipe")
 .WithOpenApi();
+
+app.MapPost("/upvoteRecipe/{id}", [Authorize] (int id) =>
+{
+    using (recipeContext rc = new recipeContext())
+    {
+        Recipe r = rc.Recipe.Find(id);
+        if (r != null)
+        {
+            r.upvotes++;
+            rc.SaveChanges();
+            return Results.Ok(r);
+        }
+        else
+        {
+            return Results.NotFound("Recipe not found");
+        }
+    }
+}).WithName("UpvoteRecipe")
+.WithOpenApi();
+
+app.MapPost("/downvoteRecipe/{id}", (int id) =>
+{
+    using (recipeContext rc = new recipeContext())
+    {
+        Recipe r = rc.Recipe.Find(id);
+        if (r != null)
+        {
+            r.upvotes--;
+            rc.SaveChanges();
+            return Results.Ok(r);
+        }
+        else
+        {
+            return Results.NotFound("Recipe not found");
+        }
+    }
+}).WithName("DownvoteRecipe")
+.WithOpenApi();
+
+
+app.MapGet("/getComments/{recipeId}", [Authorize] (int recipeId) =>
+{
+    using (recipeContext rc = new recipeContext())
+    {
+        List<Comments> comments = rc.Comments.Where(c => c.recipeId == recipeId).OrderBy(c => c.createdAt).ToList();
+        return Results.Ok(comments);
+    }
+}).WithName("GetComments")
+.WithOpenApi();
+
+
+app.MapPost("/addComment", (Comments comment) =>
+{
+    using (recipeContext rc = new recipeContext())
+    {
+        comment.createdAt = DateTime.UtcNow;
+        rc.Add(comment);
+        rc.SaveChanges();
+        return Results.Ok(comment);
+    }
+}).WithName("AddComment")
+.WithOpenApi();
+
+app.MapPost("/signup", (Users user) =>
+{
+    using (recipeContext rc = new recipeContext())
+    {
+        if (user.email != null)
+        {
+            user.username = user.email.Split('@')[0];
+
+            //Creating salt
+            var salt = new byte[16];
+            RandomNumberGenerator.Fill(salt);
+            user.salt = salt;
+
+            using (var hmac = new HMACSHA256())
+            {
+                hmac.Key = salt;
+                var passwordBytes = Encoding.UTF8.GetBytes(user.password);
+                var hashBytes = hmac.ComputeHash(passwordBytes);
+                user.password = Convert.ToBase64String(hashBytes);
+            }
+            user.createdAt = DateTime.UtcNow;
+            user.modifiedAt = null;
+            rc.Add(user);
+
+//For managing favprite recipes
+            var fav = rc.Favorites;
+            fav.Add(new Favorites { username = user.username, recipeIds = new List<int>() });
+         
+            rc.SaveChanges();
+
+            user.password = "";
+
+            return Results.Ok(user);
+        }
+        else
+        {
+            return Results.BadRequest("Invalid email/password");
+        }
+    }
+}).WithName("Signup")
+.WithOpenApi();
+
+app.MapPost("/login", (Users user) =>
+{
+    using (recipeContext rc = new recipeContext())
+    {
+        foreach (Users u in rc.Users)
+        {
+            if (u.email == user.email)
+            {
+                using (var hmac = new HMACSHA256())
+                {
+                    hmac.Key = u.salt;
+                    var passwordBytes = Encoding.UTF8.GetBytes(user.password);
+                    var hashBytes = hmac.ComputeHash(passwordBytes);
+                    if (u.password == Convert.ToBase64String(hashBytes))
+                    {
+
+                        // Return user data
+                        return Results.Ok(new
+                        {
+                            user = new { u.email, u.username },
+
+                        });
+                    }
+                    else
+                    {
+                        return Results.BadRequest("Invalid email/password");
+                    }
+                }
+            }
+        }
+    }
+    return Results.BadRequest("Invalid email/password");
+}).WithName("Login")
+.WithOpenApi();
+
+app.MapPost("/addFavorites/{username}/{recipeId}", (string username, int recipeId) =>
+{
+    using (var rc = new recipeContext())
+    {
+        // Add the recipe to favorites
+        var user = rc.Favorites.Where(f => f.username == username).FirstOrDefault();
+        user.recipeIds.Add(recipeId);
+        rc.SaveChanges();
+        return Results.Ok("Recipe added to favorites.");
+    }
+}).WithName("AddFavorites")
+  .WithOpenApi();
+
+app.MapGet("/getFavorites/{username}", (string username) =>
+{
+    using (var rc = new recipeContext())
+    {
+        // Find the user by their username
+        var fav = rc.Favorites.FirstOrDefault(u => u.username == username);
+    
+        return Results.Ok(fav.recipeIds);
+    }
+}).WithName("GetFavorites")
+  .WithOpenApi();
+
 app.Run();
 
 

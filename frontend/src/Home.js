@@ -1,5 +1,5 @@
 import banner from './assets/food.png';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import {Button,Form} from 'react-bootstrap';
 import './ViewPort.css';
 import { IoMdTrendingUp } from "react-icons/io";
@@ -8,17 +8,23 @@ import Recipes from './Recipes.js'
 import Modal from 'react-bootstrap/Modal';
 import './Home.css';
 import RecipeCreator from './RecipeCreator.js';
+import Comments from './Comments.js';
 
 
 function Home() {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
   
-  const[updateKey,setUpdateKey]=useState(0);
+  const[updateKey,setUpdateKey]=useState(null);
 
-  const handleRecipeCreated=()=>{
-    setUpdateKey(updateKey+1);
-  }
+  const handleRecipeCreated = () => {
+    console.log("Before updating key:", updateKey);
+    setUpdateKey((prevKey) => prevKey + 1); 
+  };
+
+  useEffect(() => {
+    console.log("updateKey updated:", updateKey);
+  }, [updateKey]);
 
   return (<>
     <img className="banner" src={banner} alt="Banner" />
@@ -29,7 +35,7 @@ function Home() {
       <Button variant="warning" onClick={handleShow} className='b'>+ Add new Recipe</Button>
     <RecipeCreator onRecipeCreated={handleRecipeCreated} show={show} setShow={setShow}/>
     </div>
-    <Recipes key={updateKey} userFilter="" />
+    <Recipes key={updateKey} userFilter="" showAll={true} />
 
   </>
   )

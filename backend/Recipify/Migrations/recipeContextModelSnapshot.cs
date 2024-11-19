@@ -16,6 +16,47 @@ namespace Recipify.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
 
+            modelBuilder.Entity("Comments", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("comment")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("recipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("username")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Favorites", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("recipeIds")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("username")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("Recipe", b =>
                 {
                     b.Property<int>("id")
@@ -25,8 +66,9 @@ namespace Recipify.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("image")
-                        .HasColumnType("TEXT");
+                    b.Property<byte[]>("imageFile")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("ingredients")
                         .HasColumnType("TEXT");
@@ -46,6 +88,36 @@ namespace Recipify.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Recipe");
+                });
+
+            modelBuilder.Entity("Users", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("modifiedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("password")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("salt")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("username")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }
