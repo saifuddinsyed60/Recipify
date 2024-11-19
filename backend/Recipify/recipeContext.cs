@@ -7,6 +7,6 @@ public class recipeContext:DbContext{
     public DbSet<Comments> Comments {get;set;}
     public DbSet<Favorites> Favorites {get;set;}
      protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlite($"Data Source=recipify.db");
+        => options.UseSqlite($"Data Source=/home/recipify.db");
 
 }
