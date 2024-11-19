@@ -56,10 +56,7 @@ function Login({setIsAuthenticated}) {
         setPassword(""); // Clear the password field after the request
     }
 
-    const handleGoogleLogin = () => {
-        // Redirect to your backend Google OAuth2 endpoint
-        window.location.href = 'https://your-backend-url/auth/google';
-    };
+  
 
     return (
         <Container className="d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -108,8 +105,7 @@ function Login({setIsAuthenticated}) {
                                     </Button>
                                     <br />
 
-                                    <GoogleButton onClick={handleGoogleLogin} />
-
+                                   
                                 </div>
 
                             </Form>
