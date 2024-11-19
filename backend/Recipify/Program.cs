@@ -328,7 +328,7 @@ app.MapPost("/downvoteRecipe/{id}", (int id) =>
 .WithOpenApi();
 
 
-app.MapGet("/getComments/{recipeId}", [Authorize] (int recipeId) =>
+app.MapGet("/getComments/{recipeId}",  (int recipeId) =>
 {
     using (recipeContext rc = new recipeContext())
     {
